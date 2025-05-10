@@ -6,7 +6,12 @@ export default class Escena_Juego extends Phaser.Scene {
   }
 
   init() { // Llamado antes de crear la escena; Inicializar variables; pasar datos entre escenas
-
+    // controles
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+    this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+    this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+    this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
   }
 
   preload() { // Pre-Cargar assets
@@ -34,6 +39,17 @@ export default class Escena_Juego extends Phaser.Scene {
   }
 
   update() { // Actualizar objetos del juego
+    // Movimiento del jugador
+    if (this.cursors.left.isDown || this.keyA.isDown) {
+      this.jugador.setVelocityX(-160);
+    } else if (this.cursors.right.isDown || this.keyD.isDown) {
+      this.jugador.setVelocityX(160);
+    } else {
+      this.jugador.setVelocityX(0);
+    }
 
+    if ((this.cursors.up.isDown || this.keyW.isDown) && this.jugador.body.touching.down) {
+      this.jugador.setVelocityY(-330);
+    }
   }
 }
