@@ -73,19 +73,19 @@ export default class Escena_Juego extends Phaser.Scene {
     }).setDepth(10);
 
     // Evento de tiempo para spawnear figuras
-    /*this.time.addEvent({
-      delay: this.UnSegundo,
+    this.eventoSpawnear = this.time.addEvent({
+      delay: this.UnSegundo/2,
       callback: this.spawnearFigura,
       callbackScope: this,
-      loop: this.bucle,
-    });*/
+      loop: true,
+    });
 
     // Evento de tiempo del TIMER
-    this.time.addEvent({
-      delay: 1000, // 1 segundo
+    this.eventoTiempo = this.time.addEvent({
+      delay: this.UnSegundo,
       callback: this.actualizarTiempo,
       callbackScope: this,
-      loop: this.bucle,
+      loop: true,
     });
   }
 
@@ -117,10 +117,16 @@ export default class Escena_Juego extends Phaser.Scene {
 
   spawnearFigura() {
     // Crear figura aleatoria
-    const FiguraAleatoria = Phaser.Math.RND.pick(this.Tiposfiguras).tipo; // RND significa "random"
-    const x = Phaser.Math.Between(50, 750);
-    const nuevaFigura = this.figuras.create(x, -20, FiguraAleatoria).setScale(1).refreshBody();
-    nuevaFigura.setBounce(0.6);
+    if (this.TiempoRestante > 0) {
+        const FiguraAleatoria = Phaser.Math.RND.pick(this.Tiposfiguras).tipo; // RND significa "random"
+        const x = Phaser.Math.Between(50, 750);
+        const nuevaFigura = this.figuras.create(x, -20, FiguraAleatoria).setScale(1).refreshBody();
+        nuevaFigura.setBounce(0.6);
+    }
+    else {
+        this.eventoSpawnear.remove();
+              console.log("Fin del juego");
+    }
   }
 
   actualizarTiempo() {
@@ -129,7 +135,8 @@ export default class Escena_Juego extends Phaser.Scene {
       this.TextoTiempo.setText(`Tiempo: ${this.TiempoRestante}s`);
     }
     else {
-      this.bucle = false;
+      this.eventoTiempo.remove();
+      console.log("Fin del juego");
     }
   }
 }
