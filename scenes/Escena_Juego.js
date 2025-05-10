@@ -12,6 +12,11 @@ export default class Escena_Juego extends Phaser.Scene {
     this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    this.keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+    this.keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
+
+    // Variables
+    this.physics.world.drawDebug = false; // Desactiva el modo debug
   }
 
   preload() { // Pre-Cargar assets
@@ -49,7 +54,18 @@ export default class Escena_Juego extends Phaser.Scene {
     }
 
     if ((this.cursors.up.isDown || this.keyW.isDown) && this.jugador.body.touching.down) {
-      this.jugador.setVelocityY(-330);
+      this.jugador.setVelocityY(330 * -1);
+    }
+
+    // Activar/Desactivar Modo Debug
+    if (Phaser.Input.Keyboard.JustDown(this.keyP)) {
+      this.physics.world.drawDebug = !this.physics.world.drawDebug; // lo activa o desactiva según el estado
+      this.physics.world.debugGraphic.clear(); // Para que no queden cosas
+    }
+
+    // Reiniciar el juego
+    if (Phaser.Input.Keyboard.JustDown(this.keyR)) {
+      this.scene.restart();
     }
   }
 }
