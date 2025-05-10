@@ -17,6 +17,14 @@ export default class Escena_Juego extends Phaser.Scene {
 
     // Variables
     this.physics.world.drawDebug = false; // Desactiva el modo debug
+    this.UnSegundo = 1000; // un segundo en milisegundos
+
+    // Array con objetos literales definiendo los tipos de figuras
+    this.Tiposfiguras = [
+      { tipo: "cuadrado",},
+      { tipo: "triangulo",},
+      { tipo: "diamante",},
+    ];
   }
 
   preload() { // Pre-Cargar assets
@@ -39,8 +47,20 @@ export default class Escena_Juego extends Phaser.Scene {
     this.jugador.setCollideWorldBounds(true);
     this.jugador.setBounce(0.2);
 
+    // Grupo de figuras
+    this.figuras = this.physics.add.group();
+
     // Colisiones
     this.physics.add.collider(this.jugador, this.plataformas);
+    this.physics.add.collider(this.figuras, this.plataformas, this.ReboteFigura, null, this);
+
+    // Evento de tiempo para spawnear figuras
+    this.time.addEvent({
+      delay: this.UnSegundo,
+      callback: this.spawnearFigura,
+      callbackScope: this,
+      loop: true,
+    });
   }
 
   update() { // Actualizar objetos del juego
@@ -67,5 +87,13 @@ export default class Escena_Juego extends Phaser.Scene {
     if (Phaser.Input.Keyboard.JustDown(this.keyR)) {
       this.scene.restart();
     }
+  }
+
+  spawnearFigura() {
+    // Crear figura aleatoria
+    const FiguraAleatoria = Phaser.Math.RND.pick(this.Tiposfiguras).tipo; // RND significa "random"
+    const x = Phaser.Math.Between(50, 750);
+    const nuevaFigura = this.figuras.create(x, -20, FiguraAleatoria).setScale(1).refreshBody();
+    nuevaFigura.setBounce(0.6);
   }
 }
