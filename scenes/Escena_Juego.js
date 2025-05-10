@@ -18,6 +18,8 @@ export default class Escena_Juego extends Phaser.Scene {
     // Variables
     this.physics.world.drawDebug = false; // Desactiva el modo debug
     this.UnSegundo = 1000; // un segundo en milisegundos
+    this.Puntos = 0;
+    this.TiempoRestante = 30;
 
     // Array con objetos literales definiendo los tipos de figuras
     this.Tiposfiguras = [
@@ -54,13 +56,28 @@ export default class Escena_Juego extends Phaser.Scene {
     this.physics.add.collider(this.jugador, this.plataformas);
     this.physics.add.collider(this.figuras, this.plataformas, this.ReboteFigura, null, this);
 
+    // Textos
+    this.TextoPuntos = this.add.text(16, 16, `Puntos: ${this.Puntos}`, {
+      fontSize: "32px",
+      fill: "#fff",
+      stroke: "#000",
+      strokeThickness: 8,
+    }).setDepth(10);
+
+    this.TextoTiempo = this.add.text(570, 16, `Tiempo: ${this.TiempoRestante}s`, {
+      fontSize: "32px",
+      fill: "#fff",
+      stroke: "#000",
+      strokeThickness: 8,
+    }).setDepth(10);
+
     // Evento de tiempo para spawnear figuras
-    this.time.addEvent({
+    /*this.time.addEvent({
       delay: this.UnSegundo,
       callback: this.spawnearFigura,
       callbackScope: this,
       loop: true,
-    });
+    });*/
   }
 
   update() { // Actualizar objetos del juego
