@@ -19,7 +19,8 @@ export default class Escena_Juego extends Phaser.Scene {
     this.physics.world.drawDebug = false; // Desactiva el modo debug
     this.UnSegundo = 1000; // un segundo en milisegundos
     this.Puntos = 0;
-    this.TiempoRestante = 30;
+    this.TiempoRestante = 3;
+    this.bucle = true;
 
     // Array con objetos literales definiendo los tipos de figuras
     this.Tiposfiguras = [
@@ -76,8 +77,16 @@ export default class Escena_Juego extends Phaser.Scene {
       delay: this.UnSegundo,
       callback: this.spawnearFigura,
       callbackScope: this,
-      loop: true,
+      loop: this.bucle,
     });*/
+
+    // Evento de tiempo del TIMER
+    this.time.addEvent({
+      delay: 1000, // 1 segundo
+      callback: this.actualizarTiempo,
+      callbackScope: this,
+      loop: this.bucle,
+    });
   }
 
   update() { // Actualizar objetos del juego
@@ -112,5 +121,15 @@ export default class Escena_Juego extends Phaser.Scene {
     const x = Phaser.Math.Between(50, 750);
     const nuevaFigura = this.figuras.create(x, -20, FiguraAleatoria).setScale(1).refreshBody();
     nuevaFigura.setBounce(0.6);
+  }
+
+  actualizarTiempo() {
+    if (this.TiempoRestante > 0) {
+      this.TiempoRestante--;
+      this.TextoTiempo.setText(`Tiempo: ${this.TiempoRestante}s`);
+    }
+    else {
+      this.bucle = false;
+    }
   }
 }
