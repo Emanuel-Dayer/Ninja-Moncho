@@ -20,13 +20,12 @@ export default class Escena_Juego extends Phaser.Scene {
     this.UnSegundo = 1000; // un segundo en milisegundos
     this.Puntos = 0;
     this.TiempoRestante = 3;
-    this.bucle = true;
 
     // Array con objetos literales definiendo los tipos de figuras
     this.Tiposfiguras = [
-      { tipo: "cuadrado",},
-      { tipo: "triangulo",},
-      { tipo: "diamante",},
+      { tipo: "cuadrado", cantidadjuntados: 0, puntos: 10 },
+      { tipo: "triangulo", cantidadjuntados: 0, puntos: 15 },
+      { tipo: "diamante", cantidadjuntados: 0, puntos: 20 },
     ];
   }
 
@@ -53,9 +52,10 @@ export default class Escena_Juego extends Phaser.Scene {
     // Grupo de figuras
     this.figuras = this.physics.add.group();
 
-    // Colisiones
+    // Colisiones y overlaps
     this.physics.add.collider(this.jugador, this.plataformas);
     this.physics.add.collider(this.figuras, this.plataformas, this.ReboteFigura, null, this);
+    this.physics.add.overlap(this.jugador, this.figuras, this.recolectarFigura, null, this);
 
     // Textos
     this.TextoPuntos = this.add.text(16, 16, `Puntos: ${this.Puntos}`, {
@@ -70,6 +70,28 @@ export default class Escena_Juego extends Phaser.Scene {
       fill: "#fff",
       stroke: "#000",
       strokeThickness: 8,
+    }).setDepth(10);
+
+    // Textos para mostrar la cantidad de figuras recolectadas
+    this.TextoCuadrados = this.add.text(16, 60, `Cuadrados: 0`, {
+      fontSize: "24px",
+      fill: "#fff",
+      stroke: "#000",
+      strokeThickness: 4,
+    }).setDepth(10);
+
+    this.TextoTriangulos = this.add.text(16, 90, `Triángulos: 0`, {
+      fontSize: "24px",
+      fill: "#fff",
+      stroke: "#000",
+      strokeThickness: 4,
+    }).setDepth(10);
+
+    this.TextoDiamantes = this.add.text(16, 120, `Diamantes: 0`, {
+      fontSize: "24px",
+      fill: "#fff",
+      stroke: "#000",
+      strokeThickness: 4,
     }).setDepth(10);
 
     // Evento de tiempo para spawnear figuras
@@ -99,7 +121,7 @@ export default class Escena_Juego extends Phaser.Scene {
       this.jugador.setVelocityX(0);
     }
 
-    if ((this.cursors.up.isDown || this.keyW.isDown) && this.jugador.body.touching.down) {
+    if ((this.cursors.up.isDown || this.keyW.isDown) && this.jugador.body.blocked.down) {
       this.jugador.setVelocityY(330 * -1);
     }
 
@@ -122,10 +144,11 @@ export default class Escena_Juego extends Phaser.Scene {
         const x = Phaser.Math.Between(50, 750);
         const nuevaFigura = this.figuras.create(x, -20, FiguraAleatoria).setScale(1).refreshBody();
         nuevaFigura.setBounce(0.6);
+        nuevaFigura.puntos = this.Tiposfiguras.find((figurita) => figurita.tipo === FiguraAleatoria).puntos;
     }
     else {
         this.eventoSpawnear.remove();
-              console.log("Fin del juego");
+        console.log("Fin del juego");
     }
   }
 
@@ -138,5 +161,21 @@ export default class Escena_Juego extends Phaser.Scene {
       this.eventoTiempo.remove();
       console.log("Fin del juego");
     }
+  }
+
+  recolectarFigura(jugador, figura) {
+    // Sumar puntos al recolectar la figura
+    this.Puntos += figura.puntos;
+    this.TextoPuntos.setText(`Puntos: ${this.Puntos}`);
+
+    // Incrementar la cantidad recolectada del tipo de figura
+    this.Tiposfiguras.find((figurita) => figurita.tipo === figura.texture.key).cantidadjuntados++; // busca el objeto literal que coincide con la figura recolectada y le suma 1 a la cantidadjuntados
+    
+    // Actualizar los textos de las figuras recolectadas
+    this.TextoCuadrados.setText(`Cuadrados: ${this.Tiposfiguras[0].cantidadjuntados}`);
+    this.TextoTriangulos.setText(`Triángulos: ${this.Tiposfiguras[1].cantidadjuntados}`);
+    this.TextoDiamantes.setText(`Diamantes: ${this.Tiposfiguras[2].cantidadjuntados}`);
+
+    figura.destroy();
   }
 }
