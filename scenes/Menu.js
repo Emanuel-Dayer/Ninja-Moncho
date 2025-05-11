@@ -31,8 +31,8 @@ export default class Menu extends Phaser.Scene {
      this.add.image(400, 300, "FondoMenu2").setDisplaySize(this.scale.width, this.scale.height);
 
     // Texto
-    this.add.text(400, 500, `Presiona ENTER para inicar`, {
-      fontSize: "50px",
+    this.add.text(400, 500, `Presiona ENTER para iniciar`, {
+      fontSize: "48px",
       fill: "#fff",
       stroke: "#000",
       strokeThickness: 12,
