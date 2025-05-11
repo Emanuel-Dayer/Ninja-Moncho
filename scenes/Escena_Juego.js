@@ -140,15 +140,15 @@ export default class Escena_Juego extends Phaser.Scene {
   spawnearFigura() {
     // Crear figura aleatoria
     if (this.TiempoRestante > 0) {
-        const FiguraAleatoria = Phaser.Math.RND.pick(this.Tiposfiguras).tipo; // RND significa "random"
-        const x = Phaser.Math.Between(50, 750);
-        const nuevaFigura = this.figuras.create(x, -20, FiguraAleatoria).setScale(1).refreshBody();
-        nuevaFigura.setBounce(0.6);
-        nuevaFigura.puntos = this.Tiposfiguras.find((figurita) => figurita.tipo === FiguraAleatoria).puntos;
+      const FiguraAleatoria = Phaser.Math.RND.pick(this.Tiposfiguras).tipo; // RND significa "random"
+      const x = Phaser.Math.Between(50, 750);
+      const nuevaFigura = this.figuras.create(x, -20, FiguraAleatoria).setScale(1).refreshBody();
+      nuevaFigura.setBounce(0.6);
+      nuevaFigura.puntos = this.Tiposfiguras.find((figurita) => figurita.tipo === FiguraAleatoria).puntos;
     }
     else {
-        this.eventoSpawnear.remove();
-        console.log("Fin del juego");
+      this.eventoSpawnear.remove();
+      console.log("Fin del juego");
     }
   }
 
@@ -177,5 +177,15 @@ export default class Escena_Juego extends Phaser.Scene {
     this.TextoDiamantes.setText(`Diamantes: ${this.Tiposfiguras[2].cantidadjuntados}`);
 
     figura.destroy();
+  }
+
+  ReboteFigura(figura) {
+    // Reducir puntos de la figura al rebotar
+    figura.puntos -= 5; 
+
+    // Si los puntos llegan a 0, destruir la figura
+    if (figura.puntos <= 0) {
+      figura.destroy();
+    }
   }
 }
