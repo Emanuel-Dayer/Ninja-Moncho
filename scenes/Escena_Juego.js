@@ -58,7 +58,7 @@ export default class Escena_Juego extends Phaser.Scene {
     this.physics.add.overlap(this.jugador, this.figuras, this.recolectarFigura, null, this);
 
     // Textos
-    this.TextoPuntos = this.add.text(16, 16, `Puntos: ${this.Puntos}`, {
+    this.TextoPuntos = this.add.text(16, 16, `Puntos: ${this.Puntos} / 100`, {
       fontSize: "32px",
       fill: "#fff",
       stroke: "#000",
@@ -73,21 +73,21 @@ export default class Escena_Juego extends Phaser.Scene {
     }).setDepth(10);
 
     // Textos para mostrar la cantidad de figuras recolectadas
-    this.TextoCuadrados = this.add.text(16, 60, `Cuadrados: 0`, {
+    this.TextoCuadrados = this.add.text(16, 60, `Cuadrados: 0 / 2`, {
       fontSize: "24px",
       fill: "#fff",
       stroke: "#000",
       strokeThickness: 4,
     }).setDepth(10);
 
-    this.TextoTriangulos = this.add.text(16, 90, `Triángulos: 0`, {
+    this.TextoTriangulos = this.add.text(16, 90, `Triángulos: 0 / 2`, {
       fontSize: "24px",
       fill: "#fff",
       stroke: "#000",
       strokeThickness: 4,
     }).setDepth(10);
 
-    this.TextoDiamantes = this.add.text(16, 120, `Diamantes: 0`, {
+    this.TextoDiamantes = this.add.text(16, 120, `Diamantes: 0 / 2`, {
       fontSize: "24px",
       fill: "#fff",
       stroke: "#000",
@@ -140,6 +140,17 @@ export default class Escena_Juego extends Phaser.Scene {
     if (Phaser.Input.Keyboard.JustDown(this.keyESC)) {
       this.scene.start("Escena-Menu");
     }
+
+    // Actualizar la posición del texto de cada figura, asi siempre estan en la posicion correcta
+    this.figuras.children.iterate((figura) => {
+        this.ActualizarTextoFigura(figura);
+      }
+    );
+  }
+
+  ActualizarTextoFigura(figura) {
+      figura.textoPuntos.setPosition(figura.x, figura.y);
+      figura.textoPuntos.setText(`${figura.puntos}`);
   }
 
   spawnearFigura() {
@@ -150,6 +161,14 @@ export default class Escena_Juego extends Phaser.Scene {
       const nuevaFigura = this.figuras.create(x, -20, FiguraAleatoria).setScale(1).refreshBody();
       nuevaFigura.setBounce(0.6);
       nuevaFigura.puntos = this.Tiposfiguras.find((figurita) => figurita.tipo === FiguraAleatoria).puntos;
+
+      // Crear texto sobre la figura
+      nuevaFigura.textoPuntos = this.add.text(nuevaFigura.x, nuevaFigura.y, `${nuevaFigura.puntos}`, {
+        fontSize: "16px",
+        fill: "#fff",
+        stroke: "#000",
+        strokeThickness: 5,
+      }).setOrigin(0.5);
     }
     else {
       this.eventoSpawnear.remove();
@@ -174,17 +193,19 @@ export default class Escena_Juego extends Phaser.Scene {
   recolectarFigura(jugador, figura) {
     // Sumar puntos al recolectar la figura
     this.Puntos += figura.puntos;
-    this.TextoPuntos.setText(`Puntos: ${this.Puntos}`);
+    this.TextoPuntos.setText(`Puntos: ${this.Puntos} / 100`);
 
     // Incrementar la cantidad recolectada del tipo de figura
     this.Tiposfiguras.find((figurita) => figurita.tipo === figura.texture.key).cantidadjuntados++; // busca el objeto literal que coincide con la figura recolectada y le suma 1 a la cantidadjuntados
     
     // Actualizar los textos de las figuras recolectadas
-    this.TextoCuadrados.setText(`Cuadrados: ${this.Tiposfiguras[0].cantidadjuntados}`);
-    this.TextoTriangulos.setText(`Triángulos: ${this.Tiposfiguras[1].cantidadjuntados}`);
-    this.TextoDiamantes.setText(`Diamantes: ${this.Tiposfiguras[2].cantidadjuntados}`);
+    this.TextoCuadrados.setText(`Cuadrados: ${this.Tiposfiguras[0].cantidadjuntados} / 2`);
+    this.TextoTriangulos.setText(`Triángulos: ${this.Tiposfiguras[1].cantidadjuntados} / 2`);
+    this.TextoDiamantes.setText(`Diamantes: ${this.Tiposfiguras[2].cantidadjuntados} / 2`);
 
+    // Destruir la figura y su texto
     figura.destroy();
+    figura.textoPuntos.destroy();
 
     // Verificar que todas las figuras, excepto el círculo, hayan sido recolectadas al menos 2 veces
     const todasMenosCirculoRecolectadas = this.Tiposfiguras
@@ -211,9 +232,11 @@ export default class Escena_Juego extends Phaser.Scene {
       // Si no es un círculo, reducir su puntaje en 5
       figura.puntos -= 5; 
     }
-    // Si los puntos llegan a 0, destruir la figura
+    
+    // Si los puntos llegan a 0, destruir la figura y su texto
     if (figura.puntos === 0) {
       figura.destroy();
+      figura.textoPuntos.destroy();
     }
   }
 }
