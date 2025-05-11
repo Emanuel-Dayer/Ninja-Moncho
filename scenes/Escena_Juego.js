@@ -26,6 +26,7 @@ export default class Escena_Juego extends Phaser.Scene {
       { tipo: "cuadrado", cantidadjuntados: 0, puntos: 10 },
       { tipo: "triangulo", cantidadjuntados: 0, puntos: 15 },
       { tipo: "diamante", cantidadjuntados: 0, puntos: 20 },
+      { tipo: "circulo", cantidadjuntados: 0, puntos: -25 },
     ];
   }
 
@@ -36,6 +37,7 @@ export default class Escena_Juego extends Phaser.Scene {
     this.load.image("diamante", "./public/assets/diamond.png");
     this.load.image("cuadrado", "./public/assets/square.png");
     this.load.image("triangulo", "./public/assets/triangle.png");
+    this.load.image("circulo", "./public/assets/circle.png");
   }
 
   create() { // Crear los objetos del juego
@@ -43,6 +45,8 @@ export default class Escena_Juego extends Phaser.Scene {
     this.add.image(400, 300, "Cielo").setDisplaySize(this.scale.width, this.scale.height);
     this.plataformas = this.physics.add.staticGroup();
     this.plataformas.create(400, 570, "Suelo").setScale(2).refreshBody();
+    this.plataformas.create(150, 350, "Suelo").setScale(0.5, 1).refreshBody();
+    this.plataformas.create(650, 350, "Suelo").setScale(0.5, 1).refreshBody();
 
     // Jugador
     this.jugador = this.physics.add.sprite(400, 506, "ninja").setScale(0.1);
@@ -181,10 +185,16 @@ export default class Escena_Juego extends Phaser.Scene {
 
   ReboteFigura(figura) {
     // Reducir puntos de la figura al rebotar
-    figura.puntos -= 5; 
-
+    if (figura.texture.key === "circulo") {
+      // Si es un círculo, aumentar su puntaje en 5
+      figura.puntos += 5;
+    }
+    else {
+      // Si no es un círculo, reducir su puntaje en 5
+      figura.puntos -= 5; 
+    }
     // Si los puntos llegan a 0, destruir la figura
-    if (figura.puntos <= 0) {
+    if (figura.puntos === 0) {
       figura.destroy();
     }
   }
