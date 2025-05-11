@@ -14,6 +14,7 @@ export default class Escena_Juego extends Phaser.Scene {
     this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
     this.keyP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
+    this.keyESC = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
     // Variables
     this.physics.world.drawDebug = false; // Desactiva el modo debug
@@ -32,13 +33,7 @@ export default class Escena_Juego extends Phaser.Scene {
   }
 
   preload() { // Pre-Cargar assets
-    this.load.image("Cielo", "./public/assets/Cielo.png");
-    this.load.image("Suelo", "./public/assets/platform.png");
-    this.load.image("ninja", "./public/assets/Ninja.png");
-    this.load.image("diamante", "./public/assets/diamond.png");
-    this.load.image("cuadrado", "./public/assets/square.png");
-    this.load.image("triangulo", "./public/assets/triangle.png");
-    this.load.image("circulo", "./public/assets/circle.png");
+    // Ya Pre-carge todo en el Menu
   }
 
   create() { // Crear los objetos del juego
@@ -139,6 +134,11 @@ export default class Escena_Juego extends Phaser.Scene {
     // Reiniciar el juego
     if (Phaser.Input.Keyboard.JustDown(this.keyR)) {
       this.scene.restart();
+    }
+
+    // Volver al menú
+    if (Phaser.Input.Keyboard.JustDown(this.keyESC)) {
+      this.scene.start("Escena-Menu");
     }
   }
 
