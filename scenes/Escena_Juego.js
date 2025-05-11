@@ -163,7 +163,7 @@ export default class Escena_Juego extends Phaser.Scene {
     }
     else {
       this.eventoTiempo.remove();
-      this.victoriaODerrota = "Game Over";
+      this.victoriaODerrota = "Perdiste";
       this.scene.start("Fin_Del_Juego", { 
         victoriaODerrota: this.victoriaODerrota, 
         puntos: this.Puntos 
@@ -193,7 +193,7 @@ export default class Escena_Juego extends Phaser.Scene {
     
     // Verificar condición de victoria
     if (todasMenosCirculoRecolectadas && this.Puntos >= 100) {
-      this.victoriaODerrota = "You Win";
+      this.victoriaODerrota = "Ganaste";
       this.scene.start("Fin_Del_Juego", { 
         victoriaODerrota: this.victoriaODerrota, 
         puntos: this.Puntos 
