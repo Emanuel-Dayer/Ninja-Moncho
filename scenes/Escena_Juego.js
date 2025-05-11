@@ -20,6 +20,7 @@ export default class Escena_Juego extends Phaser.Scene {
     this.UnSegundo = 1000; // un segundo en milisegundos
     this.Puntos = 0;
     this.TiempoRestante = 30;
+    this.victoriaODerrota = ""; 
 
     // Array con objetos literales definiendo los tipos de figuras
     this.Tiposfiguras = [
@@ -152,7 +153,6 @@ export default class Escena_Juego extends Phaser.Scene {
     }
     else {
       this.eventoSpawnear.remove();
-      console.log("Fin del juego");
     }
   }
 
@@ -164,7 +164,10 @@ export default class Escena_Juego extends Phaser.Scene {
     else {
       this.eventoTiempo.remove();
       this.victoriaODerrota = "Game Over";
-      console.log(this.victoriaODerrota);
+      this.scene.start("Fin_Del_Juego", { 
+        victoriaODerrota: this.victoriaODerrota, 
+        puntos: this.Puntos 
+      });
     }
   }
 
@@ -191,7 +194,10 @@ export default class Escena_Juego extends Phaser.Scene {
     // Verificar condición de victoria
     if (todasMenosCirculoRecolectadas && this.Puntos >= 100) {
       this.victoriaODerrota = "You Win";
-      console.log(this.victoriaODerrota);
+      this.scene.start("Fin_Del_Juego", { 
+        victoriaODerrota: this.victoriaODerrota, 
+        puntos: this.Puntos 
+      });
     }
   }
 
