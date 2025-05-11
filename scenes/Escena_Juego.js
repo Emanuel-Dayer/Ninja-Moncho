@@ -19,7 +19,7 @@ export default class Escena_Juego extends Phaser.Scene {
     this.physics.world.drawDebug = false; // Desactiva el modo debug
     this.UnSegundo = 1000; // un segundo en milisegundos
     this.Puntos = 0;
-    this.TiempoRestante = 3;
+    this.TiempoRestante = 30;
 
     // Array con objetos literales definiendo los tipos de figuras
     this.Tiposfiguras = [
@@ -163,7 +163,8 @@ export default class Escena_Juego extends Phaser.Scene {
     }
     else {
       this.eventoTiempo.remove();
-      console.log("Fin del juego");
+      this.victoriaODerrota = "Game Over";
+      console.log(this.victoriaODerrota);
     }
   }
 
@@ -181,6 +182,17 @@ export default class Escena_Juego extends Phaser.Scene {
     this.TextoDiamantes.setText(`Diamantes: ${this.Tiposfiguras[2].cantidadjuntados}`);
 
     figura.destroy();
+
+    // Verificar que todas las figuras, excepto el círculo, hayan sido recolectadas al menos 2 veces
+    const todasMenosCirculoRecolectadas = this.Tiposfiguras
+      .filter((figurita) => figurita.tipo !== "circulo")
+      .every((figurita) => figurita.cantidadjuntados >= 2);
+    
+    // Verificar condición de victoria
+    if (todasMenosCirculoRecolectadas && this.Puntos >= 100) {
+      this.victoriaODerrota = "You Win";
+      console.log(this.victoriaODerrota);
+    }
   }
 
   ReboteFigura(figura) {
